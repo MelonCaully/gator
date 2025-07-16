@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-	fmt.Printf("Reading config: %+v\n", cfg)
+	// fmt.Printf("Reading config: %+v\n", cfg)
 
 	// Intialize state and commmands struct
 	s := &state{
@@ -53,8 +53,11 @@ func main() {
 	c.register("reset", handlerReset)
 	c.register("users", handlerUsers)
 	c.register("agg", handlerAgg)
-	c.register("addfeed", handlerAddFeed)
+	c.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	c.register("feeds", handlerFeeds)
+	c.register("follow", middlewareLoggedIn(handlerFollow))
+	c.register("following", middlewareLoggedIn(handlerFollowing))
+	c.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 
 	// Initialize the command struct
 	cmd := command{
@@ -72,5 +75,16 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-	fmt.Printf("Reading config again: %+v\n", cfg)
+	// fmt.Printf("Reading config again: %+v\n", cfg)
+}
+
+func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) error) func(*state, command) error {
+	return func(s *state, cmd command) error {
+		user, err := s.db.GetUser(context.Background(), s.Cfg.CurrentUserName)
+		if err != nil {
+			return err
+		}
+
+		return handler(s, cmd, user)
+	}
 }

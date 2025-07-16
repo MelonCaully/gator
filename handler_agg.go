@@ -6,11 +6,9 @@ import (
 )
 
 func handlerAgg(s *state, cmd command) error {
-	feedURL := "https://www.wagslane.dev/index.xml"
-
-	feed, err := fetchFeed(context.Background(), feedURL)
+	feed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
 	if err != nil {
-		return fmt.Errorf("unable to fetch feed from %s: %w", feedURL, err)
+		return fmt.Errorf("unable to fetch feed: %w", err)
 	}
 
 	fmt.Printf("%+v\n", feed)

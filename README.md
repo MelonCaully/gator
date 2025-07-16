@@ -22,13 +22,25 @@
 
 ### Commands
 
-- login: 
+- login: sets the current user to a user registered in the database
 
 - register: registers a given username into the database
 
 - reset: resets the users table
 
 - users: grbas all instances of a user in the users table
+
+- agg: grabs all metadata from website
+
+- addFeed: stores feed in database
+
+- feeds: prints out all feeds in the database
+
+- follow: follows feed with current user
+
+- following: shows you all feeds followed by current user
+
+- unfollow: unfollows given feed from the current user
 
 ### Migrations
 

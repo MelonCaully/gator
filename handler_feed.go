@@ -9,12 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
-	user, err := s.db.GetUser(context.Background(), s.Cfg.CurrentUserName)
-	if err != nil {
-		return err
-	}
-
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("usage: %s <name> <url>", cmd.Name)
 	}
@@ -34,9 +29,22 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("couldn't create feed: %w", err)
 	}
 
+	feedFollow, err := s.db.CreateFeedFollows(context.Background(), database.CreateFeedFollowsParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("couldn't create feed follow: %w", err)
+	}
+
 	fmt.Println("Feed created successfully:")
-	printFeed(feed)
+	printFeed(feed, user)
 	fmt.Println()
+	fmt.Println("Feed followed successfully:")
+	printFeedFollow(feedFollow.UserName, feedFollow.FeedName)
 	fmt.Println("=====================================")
 
 	return nil
@@ -48,19 +56,28 @@ func handlerFeeds(s *state, cmd command) error {
 		return err
 	}
 
+	if len(feeds) == 0 {
+		fmt.Println("no feeds found")
+		return nil
+	}
+
+	fmt.Printf("found %d feeds: \n", len(feeds))
 	for _, feed := range feeds {
-		fmt.Printf("%s\n", feed.Name)
-		fmt.Printf("%s\n", s.Cfg.CurrentUserName)
+		user, err := s.db.GetUserByID(context.Background(), feed.UserID)
+		if err != nil {
+			return fmt.Errorf("unable to get user by id %d: %w", feed.UserID, err)
+		}
+		printFeed(feed, user)
 	}
 
 	return nil
 }
 
-func printFeed(feed database.Feed) {
-	fmt.Printf("* ID:            %s\n", feed.ID)
-	fmt.Printf("* Created:       %v\n", feed.CreatedAt)
-	fmt.Printf("* Updated:       %v\n", feed.UpdatedAt)
+func printFeed(feed database.Feed, user database.User) {
+	//fmt.Printf("* ID:            %s\n", feed.ID)
+	//fmt.Printf("* Created:       %v\n", feed.CreatedAt)
+	//fmt.Printf("* Updated:       %v\n", feed.UpdatedAt)
 	fmt.Printf("* Name:          %s\n", feed.Name)
 	fmt.Printf("* URL:           %s\n", feed.Url)
-	fmt.Printf("* UserID:        %s\n", feed.UserID)
+	fmt.Printf("* UserID:        %s\n", user.Name)
 }
