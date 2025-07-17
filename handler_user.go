@@ -11,7 +11,7 @@ import (
 
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.Args) <= 0 {
-		return fmt.Errorf("no command present")
+		return fmt.Errorf("usage: %v <name>", cmd.Name)
 	}
 
 	_, err := s.db.GetUser(context.Background(), cmd.Args[0])

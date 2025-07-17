@@ -28,9 +28,9 @@
 
 - reset: resets the users table
 
-- users: grbas all instances of a user in the users table
+- users: grabs all instances of a user in the users table
 
-- agg: grabs all metadata from website
+- agg: grabs all metadata/data from website
 
 - addFeed: stores feed in database
 
@@ -41,6 +41,8 @@
 - following: shows you all feeds followed by current user
 
 - unfollow: unfollows given feed from the current user
+
+- browse: allows the user to see all posts of a given feed they follow
 
 ### Migrations
 
