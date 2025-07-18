@@ -1,5 +1,5 @@
 # Gator 
-
+[![](https://godoc.org/github.com/wagslane/go-tinytime?status.svg)](https://godoc.org/github.com/wagslane/go-tinytime)
 ### To run workspace, install and build the following : 
 
 - (Using Ubuntu) Install go: 'sudo apt update' & 'sudo apt install golang-go'
