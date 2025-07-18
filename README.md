@@ -1,5 +1,4 @@
 # Gator 
-[![](https://godoc.org/github.com/MelonCaully/gator?status.svg)](https://godoc.org/github.com/MelonCaully/gator)
 ### To run workspace, install and build the following : 
 
 - (Using Ubuntu) Install go: 'sudo apt update' & 'sudo apt install golang-go'
